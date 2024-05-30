@@ -30,14 +30,16 @@ async function fetchGameState(gameId) {
         const gameState = await response.json();
         displayGameBoard(gameState.board);
         displayCurrentPlayer(gameState.currentPlayer);
+        updateRoundCounter(gameState.round);
         currentPlayer = gameState.currentPlayer;
         initialPlacement = gameState.initialPlacement;
         document.getElementById('gameBoard').style.display = 'table';
         document.getElementById('endTurnButton').style.display = initialPlacement ? 'none' : 'block';
         if (initialPlacement) {
             displayMonsterOptions();
+        } else {
+            document.getElementById('monsterOptions').innerHTML = ''; // Clear options after initial placement
         }
-        updateRoundCounter(gameState.round);
         checkForNoMovesLeft();
     } catch (error) {
         console.error('Error fetching game state:', error);
@@ -137,6 +139,7 @@ async function placeMonster(row, column, monsterType) {
         const gameState = await response.json();
         displayGameBoard(gameState.board);
         displayCurrentPlayer(gameState.currentPlayer);
+        updateRoundCounter(gameState.round);
         currentPlayer = gameState.currentPlayer;
         initialPlacement = gameState.initialPlacement;
         if (initialPlacement) {
@@ -144,6 +147,7 @@ async function placeMonster(row, column, monsterType) {
         } else {
             document.getElementById('monsterOptions').innerHTML = ''; // Clear options after initial placement
         }
+        document.getElementById('endTurnButton').style.display = initialPlacement ? 'none' : 'block';
         checkForNoMovesLeft();
     } catch (error) {
         console.error('Error placing monster:', error);
@@ -171,6 +175,7 @@ async function moveMonster(startRow, startColumn, endRow, endColumn) {
         const gameState = await response.json();
         displayGameBoard(gameState.board);
         displayCurrentPlayer(gameState.currentPlayer);
+        updateRoundCounter(gameState.round);
         currentPlayer = gameState.currentPlayer;
         checkForNoMovesLeft();
     } catch (error) {
@@ -192,9 +197,10 @@ async function endTurn() {
         const gameState = await response.json();
         displayGameBoard(gameState.board);
         displayCurrentPlayer(gameState.currentPlayer);
+        updateRoundCounter(gameState.round);
         currentPlayer = gameState.currentPlayer;
         initialPlacement = gameState.initialPlacement;
-        updateRoundCounter(gameState.round);
+        document.getElementById('endTurnButton').style.display = initialPlacement ? 'none' : 'block';
         checkForWin(gameState);
     } catch (error) {
         console.error('Error ending turn:', error);

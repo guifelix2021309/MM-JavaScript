@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monster Mayhem Game Board</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid black;
+            width: 60px; /* Fixed cell width */
+            height: 60px; /* Fixed cell height */
+            text-align: center;
+            vertical-align: middle;
+            cursor: pointer;
+            font-size: 16px; /* Adjust font size to fit within 15px cells */
+        }
+        #startGameButton, #endTurnButton {
+            display: block;
+            margin: 20px auto;
+        }
+        #currentPlayer, #roundCounter {
+            text-align: center;
+            font-size: 20px;
+            margin: 20px;
+        }
+        #monsterOptions {
+            text-align: center;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Monster Mayhem Game Board</h1>
+    <button id="startGameButton">Start Game</button>
+    <div id="currentPlayer">Current Player: N/A</div>
+    <div id="roundCounter">Round: 0</div>
+    <div id="monsterOptions"></div>
+    <table id="gameBoard" style="display: none;">
+        <tbody></tbody>
+    </table>
+    <button id="endTurnButton" style="display: none;">End Turn</button>
+    <script src="script.js"></script>
+</body>
+</html>

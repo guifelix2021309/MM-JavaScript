@@ -162,7 +162,7 @@ async function moveMonster(startRow, startColumn, endRow, endColumn) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                playerId: selectedMonster.player,
+                playerId: currentPlayer,
                 startRow,
                 startColumn,
                 endRow,

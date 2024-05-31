@@ -107,7 +107,7 @@ class GameState {
             this.gameBoard[startRow][startColumn] = { player: 0, monster: 'None' };
         }
 
-        this.endTurn();
+        this.checkForNoMovesLeft();
     }
 
     isValidPlacement(playerId, row, column) {
@@ -192,21 +192,38 @@ class GameState {
         this.gameBoard[startRow][startColumn] = { player: 0, monster: 'None' };
     }
 
+    checkForNoMovesLeft() {
+        const currentPlayerMonsters = this.gameBoard.flat().filter(cell => cell.player === this.currentPlayer);
+        if (currentPlayerMonsters.length === 0 || !currentPlayerMonsters.some(monster => this.canMonsterMove(monster))) {
+            this.endTurn();
+        }
+    }
+
+    canMonsterMove(monster) {
+        // Define logic to check if a monster can move
+        return true; // Replace this with actual logic
+    }
+
     endTurn() {
-        if (this.initialPlacement) {
-            this.turnIndex = (this.turnIndex + 1) % this.players.length;
-            this.currentPlayer = this.players[this.turnIndex];
-            if (this.initialMonstersPlaced[1] >= 3 && this.initialMonstersPlaced[2] >= 3) {
-                this.initialPlacement = false; // End initial placement phase
-            }
+        if (this.initialPlacement && this.initialMonstersPlaced[1] >= 3 && this.initialMonstersPlaced[2] >= 3) {
+            this.initialPlacement = false;
+            this.turnIndex = this.players.indexOf(this.determineFirstPlayer());
         } else {
             this.turnIndex = (this.turnIndex + 1) % this.players.length;
-            this.currentPlayer = this.players[this.turnIndex];
             if (this.turnIndex === 0) {
                 this.round++; // Increment the round counter after both players have taken their turns
             }
-            this.checkForWin();
+            this.currentPlayer = this.determineNextPlayer();
         }
+        this.checkForWin();
+    }
+
+    determineNextPlayer() {
+        const playerCounts = Object.entries(this.playerMonsterCount);
+        playerCounts.sort((a, b) => a[1] - b[1]);
+        const minCount = playerCounts[0][1];
+        const tiedPlayers = playerCounts.filter(([player, count]) => count === minCount).map(([player]) => parseInt(player));
+        return tiedPlayers[Math.floor(Math.random() * tiedPlayers.length)];
     }
 
     checkForWin() {

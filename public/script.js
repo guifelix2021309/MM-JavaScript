@@ -16,6 +16,7 @@ async function startGame() {
         const data = await response.json();
         currentGameId = data.gameId;
         fetchGameState(currentGameId);
+        updateStats();
     } catch (error) {
         console.error('Error starting game:', error);
     }
@@ -231,6 +232,24 @@ function canMove(row, column) {
 function checkForWin(gameState) {
     if (gameState.winner) {
         alert(`Player ${gameState.winner} wins!`);
+        updateStats();
+    }
+}
+
+async function updateStats() {
+    try {
+        const gamesPlayedResponse = await fetch('http://localhost:3000/api/gamesPlayed');
+        const gamesPlayedData = await gamesPlayedResponse.json();
+        document.getElementById('gamesPlayed').textContent = `Games Played: ${gamesPlayedData.gamesPlayed}`;
+
+        const statsResponse = await fetch('http://localhost:3000/api/stats');
+        const statsData = await statsResponse.json();
+        document.getElementById('player1Wins').textContent = statsData[1].wins;
+        document.getElementById('player1Losses').textContent = statsData[1].losses;
+        document.getElementById('player2Wins').textContent = statsData[2].wins;
+        document.getElementById('player2Losses').textContent = statsData[2].losses;
+    } catch (error) {
+        console.error('Error updating stats:', error);
     }
 }
 

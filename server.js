@@ -12,7 +12,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 const PORT = process.env.PORT || 3000;
 
 let games = [];
-let playerStats = {};
+let playerStats = { 1: { wins: 0, losses: 0 }, 2: { wins: 0, losses: 0 } };
 
 app.post('/api/game', (req, res) => {
     const newGame = new GameState();
@@ -64,7 +64,13 @@ app.post('/api/game/:gameId/endTurn', (req, res) => {
     try {
         if (games[gameId]) {
             games[gameId].endTurn();
-            res.json(games[gameId].getGameBoard());
+            const gameState = games[gameId];
+            if (gameState.winner) {
+                playerStats[gameState.winner].wins++;
+                const loser = gameState.winner === 1 ? 2 : 1;
+                playerStats[loser].losses++;
+            }
+            res.json(gameState.getGameBoard());
         } else {
             res.status(404).send('Game not found');
         }
@@ -75,6 +81,10 @@ app.post('/api/game/:gameId/endTurn', (req, res) => {
 
 app.get('/api/stats', (req, res) => {
     res.json(playerStats);
+});
+
+app.get('/api/gamesPlayed', (req, res) => {
+    res.json({ gamesPlayed: games.length });
 });
 
 app.listen(PORT, () => {

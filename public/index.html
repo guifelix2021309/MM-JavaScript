@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h1 style="text-align: center;">Monster Mayhem Game Board</h1>
+    <h1>Monster Mayhem Game Board</h1>
     <button id="startGameButton">Start Game</button>
     <div id="currentPlayer">Current Player: N/A</div>
     <div id="roundCounter">Round: 0</div>
@@ -16,6 +16,13 @@
         <tbody></tbody>
     </table>
     <button id="endTurnButton" style="display: none;">End Turn</button>
+    <div id="stats">
+        <div id="gamesPlayed">Games Played: 0</div>
+        <div id="playerStats">
+            <div>Player 1 - Wins: <span id="player1Wins">0</span>, Losses: <span id="player1Losses">0</span></div>
+            <div>Player 2 - Wins: <span id="player2Wins">0</span>, Losses: <span id="player2Losses">0</span></div>
+        </div>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>

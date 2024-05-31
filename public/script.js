@@ -1,46 +1,92 @@
-document.getElementById('startGameButton').addEventListener('click', startGame);
+const socket = io();
+
+document.getElementById('joinGameButton').addEventListener('click', joinGame);
 document.getElementById('endTurnButton').addEventListener('click', endTurn);
 
 let selectedMonster = null; // To store the position of the selected monster
 let currentGameId = null; // To store the current game ID
 let currentPlayer = null; // To store the current player
+let playerNicknames = {}; // To store player nicknames
 let initialPlacement = false; // To track if the initial placement phase is ongoing
-let roundCounter = 0; // Initialize the round counter
 
-async function startGame() {
-    try {
-        const response = await fetch('http://localhost:3000/api/game', { method: 'POST' });
-        if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
-        }
-        const data = await response.json();
-        currentGameId = data.gameId;
-        fetchGameState(currentGameId);
-        updateStats();
-    } catch (error) {
-        console.error('Error starting game:', error);
+socket.on('waitingForOpponent', () => {
+    document.getElementById('nicknameForm').style.display = 'none';
+    document.getElementById('waitingMessage').style.display = 'block';
+});
+
+socket.on('startGame', ({ gameId, players }) => {
+    document.getElementById('nicknameForm').style.display = 'none';
+    document.getElementById('waitingMessage').style.display = 'none';
+    document.getElementById('gameArea').style.display = 'block';
+
+    currentGameId = gameId;
+    players.forEach(player => {
+        playerNicknames[player.id] = player.nickname;
+    });
+
+    const player = players.find(p => p.socketId === socket.id);
+    currentPlayer = player.id;
+    document.getElementById('currentPlayer').textContent = `Current Player: ${player.nickname}`;
+    document.getElementById('player1Stats').innerHTML = `${playerNicknames[1]} - Wins: <span id="player1Wins">0</span>, Losses: <span id="player1Losses">0</span>`;
+    document.getElementById('player2Stats').innerHTML = `${playerNicknames[2]} - Wins: <span id="player2Wins">0</span>, Losses: <span id="player2Losses">0</span>`;
+    fetchGameState(gameId); // Fetch the initial game state
+});
+
+socket.on('gameState', (gameState) => {
+    displayGameBoard(gameState.board);
+    displayCurrentPlayer(gameState.currentPlayer);
+    updateRoundCounter(gameState.round);
+    initialPlacement = gameState.initialPlacement;
+    document.getElementById('endTurnButton').style.display = initialPlacement ? 'none' : 'block';
+    if (initialPlacement) {
+        displayMonsterOptions();
+    } else {
+        document.getElementById('monsterOptions').innerHTML = ''; // Clear options after initial placement
+    }
+    checkForNoMovesLeft();
+});
+
+socket.on('error', (message) => {
+    alert(message);
+});
+
+function joinGame() {
+    const nickname = document.getElementById('nickname').value;
+    if (nickname) {
+        socket.emit('joinGame', nickname);
+    } else {
+        alert('Please enter a nickname.');
     }
 }
 
 async function fetchGameState(gameId) {
     try {
-        const response = await fetch(`http://localhost:3000/api/game/${gameId}`);
+        console.log(`Fetching game state for game ID: ${gameId}`);
+        const response = await fetch(`/api/game/${gameId}`);
+        
         if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
+            throw new Error('Network response was not ok: ' + response.statusText);
         }
+        
         const gameState = await response.json();
+        
+        if (!gameState || !gameState.board) {
+            throw new Error('Invalid game state received: ' + JSON.stringify(gameState));
+        }
+        
+        console.log('Game state fetched successfully:', gameState);
         displayGameBoard(gameState.board);
         displayCurrentPlayer(gameState.currentPlayer);
         updateRoundCounter(gameState.round);
-        currentPlayer = gameState.currentPlayer;
         initialPlacement = gameState.initialPlacement;
-        document.getElementById('gameBoard').style.display = 'table';
         document.getElementById('endTurnButton').style.display = initialPlacement ? 'none' : 'block';
+        
         if (initialPlacement) {
             displayMonsterOptions();
         } else {
             document.getElementById('monsterOptions').innerHTML = ''; // Clear options after initial placement
         }
+        
         checkForNoMovesLeft();
     } catch (error) {
         console.error('Error fetching game state:', error);
@@ -67,8 +113,9 @@ function displayGameBoard(gameBoard) {
     }
 }
 
-function displayCurrentPlayer(player) {
-    document.getElementById('currentPlayer').textContent = `Current Player: Player ${player}`;
+function displayCurrentPlayer(playerId) {
+    const playerName = playerNicknames[playerId] || `Player ${playerId}`;
+    document.getElementById('currentPlayer').textContent = `Current Player: ${playerName}`;
 }
 
 function displayMonsterOptions() {
@@ -120,92 +167,16 @@ function handleCellClick(event) {
     }
 }
 
-async function placeMonster(row, column, monsterType) {
-    try {
-        const response = await fetch(`http://localhost:3000/api/game/${currentGameId}/addMonster`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                playerId: currentPlayer,
-                row,
-                column,
-                monsterType,
-            }),
-        });
-        if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
-        }
-        const gameState = await response.json();
-        displayGameBoard(gameState.board);
-        displayCurrentPlayer(gameState.currentPlayer);
-        updateRoundCounter(gameState.round);
-        currentPlayer = gameState.currentPlayer;
-        initialPlacement = gameState.initialPlacement;
-        if (initialPlacement) {
-            displayMonsterOptions();
-        } else {
-            document.getElementById('monsterOptions').innerHTML = ''; // Clear options after initial placement
-        }
-        document.getElementById('endTurnButton').style.display = initialPlacement ? 'none' : 'block';
-        checkForNoMovesLeft();
-    } catch (error) {
-        console.error('Error placing monster:', error);
-    }
+function placeMonster(row, column, monsterType) {
+    socket.emit('addMonster', { gameId: currentGameId, playerId: currentPlayer, row, column, monsterType });
 }
 
-async function moveMonster(startRow, startColumn, endRow, endColumn) {
-    try {
-        const response = await fetch(`http://localhost:3000/api/game/${currentGameId}/moveMonster`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                playerId: currentPlayer,
-                startRow,
-                startColumn,
-                endRow,
-                endColumn,
-            }),
-        });
-        if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
-        }
-        const gameState = await response.json();
-        displayGameBoard(gameState.board);
-        displayCurrentPlayer(gameState.currentPlayer);
-        updateRoundCounter(gameState.round);
-        currentPlayer = gameState.currentPlayer;
-        checkForNoMovesLeft();
-    } catch (error) {
-        console.error('Error moving monster:', error);
-    }
+function moveMonster(startRow, startColumn, endRow, endColumn) {
+    socket.emit('moveMonster', { gameId: currentGameId, playerId: currentPlayer, startRow, startColumn, endRow, endColumn });
 }
 
-async function endTurn() {
-    try {
-        const response = await fetch(`http://localhost:3000/api/game/${currentGameId}/endTurn`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
-        }
-        const gameState = await response.json();
-        displayGameBoard(gameState.board);
-        displayCurrentPlayer(gameState.currentPlayer);
-        updateRoundCounter(gameState.round);
-        currentPlayer = gameState.currentPlayer;
-        initialPlacement = gameState.initialPlacement;
-        document.getElementById('endTurnButton').style.display = initialPlacement ? 'none' : 'block';
-        checkForWin(gameState);
-    } catch (error) {
-        console.error('Error ending turn:', error);
-    }
+function endTurn() {
+    socket.emit('endTurn', currentGameId);
 }
 
 function checkForNoMovesLeft() {
@@ -231,18 +202,18 @@ function canMove(row, column) {
 
 function checkForWin(gameState) {
     if (gameState.winner) {
-        alert(`Player ${gameState.winner} wins!`);
+        alert(`Player ${playerNicknames[gameState.winner]} wins!`);
         updateStats();
     }
 }
 
 async function updateStats() {
     try {
-        const gamesPlayedResponse = await fetch('http://localhost:3000/api/gamesPlayed');
+        const gamesPlayedResponse = await fetch('/api/gamesPlayed');
         const gamesPlayedData = await gamesPlayedResponse.json();
         document.getElementById('gamesPlayed').textContent = `Games Played: ${gamesPlayedData.gamesPlayed}`;
 
-        const statsResponse = await fetch('http://localhost:3000/api/stats');
+        const statsResponse = await fetch('/api/stats');
         const statsData = await statsResponse.json();
         document.getElementById('player1Wins').textContent = statsData[1].wins;
         document.getElementById('player1Losses').textContent = statsData[1].losses;

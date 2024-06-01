@@ -43,6 +43,11 @@ socket.on('gameState', (gameState) => {
     } else {
         document.getElementById('monsterOptions').innerHTML = ''; // Clear options after initial placement
     }
+
+    if (gameState.gameOver) {
+        handleGameEnd(gameState.winner);
+    }
+
     checkForNoMovesLeft();
 });
 
@@ -176,7 +181,7 @@ function moveMonster(startRow, startColumn, endRow, endColumn) {
 }
 
 function endTurn() {
-    socket.emit('endTurn', currentGameId);
+    socket.emit('endTurn', { gameId: currentGameId, playerId: currentPlayer });
 }
 
 function checkForNoMovesLeft() {
@@ -200,13 +205,6 @@ function canMove(row, column) {
     return true; // Replace this with actual logic
 }
 
-function checkForWin(gameState) {
-    if (gameState.winner) {
-        alert(`Player ${playerNicknames[gameState.winner]} wins!`);
-        updateStats();
-    }
-}
-
 async function updateStats() {
     try {
         const gamesPlayedResponse = await fetch('/api/gamesPlayed');
@@ -226,4 +224,59 @@ async function updateStats() {
 
 function updateRoundCounter(round) {
     document.getElementById('roundCounter').textContent = `Round: ${round}`;
+}
+
+function handleGameEnd(winner) {
+    if (winner === 'draw') {
+        alert('The game is a draw!');
+        updatePlayerStats(1, 'win');
+        updatePlayerStats(2, 'win');
+    } else {
+        alert(`Player ${playerNicknames[winner]} wins!`);
+        updatePlayerStats(winner, 'win');
+        const loser = winner === 1 ? 2 : 1;
+        updatePlayerStats(loser, 'loss');
+    }
+    updateStats();
+    showPlayAgainOption();
+}
+
+function updatePlayerStats(playerId, result) {
+    const winElement = document.getElementById(`player${playerId}Wins`);
+    const lossElement = document.getElementById(`player${playerId}Losses`);
+    if (result === 'win') {
+        winElement.textContent = parseInt(winElement.textContent) + 1;
+    } else if (result === 'loss') {
+        lossElement.textContent = parseInt(lossElement.textContent) + 1;
+    }
+}
+
+function showPlayAgainOption() {
+    const playAgainMessage = document.createElement('div');
+    playAgainMessage.innerHTML = `
+        <p>Would you like to play again?</p>
+        <button id="playAgainYes">Yes</button>
+        <button id="playAgainNo">No</button>
+    `;
+    document.body.appendChild(playAgainMessage);
+
+    document.getElementById('playAgainYes').addEventListener('click', () => {
+        playAgainMessage.remove();
+        socket.emit('playAgain', { gameId: currentGameId });
+    });
+
+    document.getElementById('playAgainNo').addEventListener('click', () => {
+        playAgainMessage.remove();
+        window.location.href = '/';
+    });
+}
+
+function resetClientState() {
+    // Reset the client state to initial conditions for a new game
+    initialPlacement = true;
+    selectedMonster = null;
+    document.getElementById('endTurnButton').style.display = 'none';
+    document.getElementById('monsterOptions').innerHTML = ''; // Clear options to ensure fresh start
+    displayMonsterOptions(); // Display monster options for the new game
+    fetchGameState(currentGameId); // Fetch the new game state
 }

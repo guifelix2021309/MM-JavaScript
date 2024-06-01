@@ -18,13 +18,14 @@ const PORT = process.env.PORT || 3000;
 
 let games = [];
 let playerStats = { 1: { wins: 0, losses: 0 }, 2: { wins: 0, losses: 0 } };
+let gamesPlayed = 0; // Add this counter
 
 app.get('/api/stats', (req, res) => {
     res.json(playerStats);
 });
 
 app.get('/api/gamesPlayed', (req, res) => {
-    res.json({ gamesPlayed: games.length });
+    res.json({ gamesPlayed });
 });
 
 app.get('/api/game/:gameId', (req, res) => {
@@ -84,20 +85,62 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('endTurn', (gameId) => {
+    socket.on('endTurn', ({ gameId, playerId }) => {
         try {
-            if (games[gameId]) {
-                games[gameId].endTurn();
-                const gameState = games[gameId];
-                if (gameState.winner) {
-                    playerStats[gameState.winner].wins++;
+            const gameState = games[gameId];
+            
+            if (!gameState) {
+                socket.emit('error', 'Game does not exist.');
+                return;
+            }
+    
+            if (gameState.isGameOver) {
+                socket.emit('error', 'Game is already over.');
+                return;
+            }
+    
+            if (gameState.currentPlayer !== playerId) {
+                socket.emit('error', 'It is not your turn.');
+                return;
+            }
+    
+            gameState.endTurn();
+            
+            if (gameState.isGameOver) {
+                // Ensure stats are updated only once
+                if (gameState.winner === 'draw') {
+                    playerStats[1].wins += 1;
+                    playerStats[2].wins += 1;
+                } else {
+                    playerStats[gameState.winner].wins += 1;
                     const loser = gameState.winner === 1 ? 2 : 1;
-                    playerStats[loser].losses++;
+                    playerStats[loser].losses += 1;
                 }
-                io.to(gameId).emit('gameState', { ...gameState.getGameBoard(), players: gameState.players });
+                gamesPlayed += 1;
+    
+                // Send the final game state to clients
+                io.to(gameId).emit('gameState', { 
+                    ...gameState.getGameBoard(), 
+                    players: gameState.players, 
+                    gameOver: true, 
+                    winner: gameState.winner 
+                });
+            } else {
+                // Send the updated game state to clients
+                io.to(gameId).emit('gameState', { 
+                    ...gameState.getGameBoard(), 
+                    players: gameState.players 
+                });
             }
         } catch (error) {
             socket.emit('error', error.message);
+        }
+    });
+
+    socket.on('playAgain', ({ gameId }) => {
+        if (games[gameId]) {
+            games[gameId].reset();
+            io.to(gameId).emit('startGame', { gameId, players: games[gameId].players });
         }
     });
 

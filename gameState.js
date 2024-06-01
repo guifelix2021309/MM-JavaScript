@@ -1,5 +1,9 @@
 class GameState {
     constructor() {
+        this.resetGameState();
+    }
+
+    resetGameState() {
         this.gameBoard = Array(10).fill(null).map(() => Array(10).fill({ player: 0, monster: 'None' }));
         this.playerEliminationCount = { 1: 0, 2: 0 };
         this.playerMonsterCount = { 1: 0, 2: 0 };
@@ -12,6 +16,10 @@ class GameState {
         this.randomPlaceRemainingMonsters(); // Randomly place the 7 monsters before players add their own
         this.winner = null; // Track the winner of the game
         this.round = 0; // Initialize the round counter
+    }
+
+    reset() {
+        this.resetGameState();
     }
 
     getGameBoard() {
@@ -205,6 +213,9 @@ class GameState {
     }
 
     endTurn() {
+        if (this.isGameOver) {
+            return;
+        }
         if (this.initialPlacement && this.initialMonstersPlaced[1] >= 3 && this.initialMonstersPlaced[2] >= 3) {
             this.initialPlacement = false;
             this.turnIndex = this.players.indexOf(this.determineFirstPlayer());
@@ -213,7 +224,7 @@ class GameState {
             if (this.turnIndex === 0) {
                 this.round++; // Increment the round counter after both players have taken their turns
             }
-            this.currentPlayer = this.determineNextPlayer();
+            this.currentPlayer = this.players[this.turnIndex];
         }
         this.checkForWin();
     }
@@ -235,12 +246,15 @@ class GameState {
     }
 
     checkForWin() {
-        for (const playerId of this.players) {
-            if (this.playerMonsterCount[playerId] <= 0) {
-                this.winner = this.players.find(id => id !== playerId);
-                this.isGameOver = true;
-                break;
-            }
+        if (this.playerMonsterCount[1] <= 0 && this.playerMonsterCount[2] <= 0) {
+            this.winner = 'draw';
+            this.isGameOver = true;
+        } else if (this.playerMonsterCount[1] <= 0) {
+            this.winner = 2;
+            this.isGameOver = true;
+        } else if (this.playerMonsterCount[2] <= 0) {
+            this.winner = 1;
+            this.isGameOver = true;
         }
     }
 }

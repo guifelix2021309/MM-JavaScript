@@ -218,6 +218,14 @@ class GameState {
         this.checkForWin();
     }
 
+    determineFirstPlayer() {
+        const playerCounts = Object.entries(this.playerMonsterCount);
+        playerCounts.sort((a, b) => a[1] - b[1]);
+        const minCount = playerCounts[0][1];
+        const tiedPlayers = playerCounts.filter(([player, count]) => count === minCount).map(([player]) => parseInt(player));
+        return tiedPlayers[Math.floor(Math.random() * tiedPlayers.length)];
+    }
+
     determineNextPlayer() {
         const playerCounts = Object.entries(this.playerMonsterCount);
         playerCounts.sort((a, b) => a[1] - b[1]);
@@ -235,8 +243,6 @@ class GameState {
             }
         }
     }
-
-    // Existing methods...
 }
 
 module.exports = GameState;

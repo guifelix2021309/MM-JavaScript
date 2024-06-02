@@ -1,30 +1,187 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Creepster', cursive; /* Apply Creepster font globally */
     text-align: center;
+    background-color: #121212; /* Dark background */
+    color: #e0e0e0; /* Light text */
+    background-image: url('../image/MonsterMayhemBG.png'); /* Add background image */
+    background-size: cover; /* Ensure the image covers the entire background */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    background-attachment: fixed; /* Make the background image fixed */
+    background-position: center; /* Center the background image */
+    margin: 0; /* Remove default margin */
+    padding-top: 80px; /* Add padding to prevent content from hiding behind the header */
+}
+
+h1 {
+    color: #ffffff; /* White text for the title */
+}
+
+.monster-title {
+    font-size: 3em; /* Adjust as needed */
+    background: linear-gradient(90deg, #006600, #51035f); /* Gradient from green to purple */
+    -webkit-background-clip: text;
+    color: transparent; /* Hide the actual text */
+    text-shadow: 2px 1px 2px #8f0000; /* Optional: add some shadow for a more spooky effect */
+}
+
+header {
+    background-color: #1c1c1c; /* Dark background for header */
+    color: #e0e0e0; /* Light text */
+    padding: 10px; /* Padding */
+    text-align: center; /* Centered text */
+    width: 100%; /* Full width */
+    top: 0; /* Stick to the top */
+    position: fixed; /* Fixed position at the top */
+    z-index: 1; /* Ensure header is above other content */
+}
+
+main {
+    padding-top: 80px; /* Ensure main content starts below the fixed header */
+}
+
+#gameArea {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px; /* Adjust gap as needed */
+    position: relative;
+}
+
+#boardContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#currentPlayer, #roundCounter, #stats {
+    margin: 10px auto;
+    background-color: #1c1c1c; /* Dark background for these sections */
+    padding: 10px; /* Padding */
+    border-radius: 5px; /* Rounded corners */
+    display: inline-block; /* Fit to content width */
+    max-width: fit-content; /* Ensure it fits the content */
+}
+
+#monsterOptions {
+    background-color: #1c1c1c; /* Dark background */
+    padding: 10px; /* Padding */
+    border-radius: 5px; /* Rounded corners */
+    max-width: 200px; /* Limit width */
+}
+
+#monsterOptions button {
+    margin: 5px;
+    background-color: #555555; /* Dark button background */
+    color: #ffffff; /* Light text for buttons */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px; /* Padding */
 }
 
 #gameBoard {
-    margin: 0 auto;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 5px; /* Add spacing between cells */
+    background-color: #333333; /* Dark background for the game board */
 }
 
 #gameBoard td {
     width: 40px;
     height: 40px;
-    border: 1px solid #000;
+    border: 1px solid #555555; /* Dark border */
     text-align: center;
     vertical-align: middle;
+    background-color: #444444; /* Slightly lighter background for cells */
+    color: #e0e0e0; /* Light text for cells */
+    box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
 }
 
-#currentPlayer, #roundCounter, #stats {
-    margin: 10px 0;
+.player1 {
+    background-color: #4caf50 !important; /* Green background for Player 1 */
 }
 
-#monsterOptions button {
-    margin: 5px;
+.player2 {
+    background-color: #9c27b0 !important; /* Purple background for Player 2 */
 }
 
 button {
     padding: 10px;
     font-size: 16px;
+    background-color: #555555; /* Dark button background */
+    color: #ffffff; /* Light text for buttons */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+button:hover {
+    background-color: #666666; /* Lighter background on hover */
+}
+
+input[type="text"], #joinGameButton {
+    background-color: #333333; /* Dark background for input */
+    color: #e0e0e0; /* Light text */
+    border: 1px solid #555555; /* Dark border */
+    padding: 10px; /* Padding */
+    border-radius: 5px; /* Rounded corners */
+    width: 300px; /* Consistent width */
+    margin: 5px 0; /* Margin for spacing */
+}
+
+#nicknameForm {
+    background-color: #1c1c1c; /* Dark background for containers */
+    padding: 20px; /* Padding */
+    border-radius: 10px; /* Rounded corners */
+    margin: 20px; /* Margin */
+    display: inline-block; /* Inline block to fit the content */
+}
+
+#nicknameForm label {
+    color: #e0e0e0; /* Light text for labels */
+}
+
+#stats div {
+    color: #e0e0e0; /* Light text for stats */
+    margin: 10px 0; /* Add space between elements */
+}
+
+.player1-name {
+    background-color: #4caf50; /* Green background for Player 1 */
+    color: #ffffff; /* White text for better contrast */
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+
+.player2-name {
+    background-color: #9c27b0; /* Purple background for Player 2 */
+    color: #ffffff; /* White text for better contrast */
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+
+#endTurnButton {
+    display: none; /* Hide by default, shown conditionally */
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background-color: #555555; /* Dark button background */
+    color: #ffffff; /* Light text */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px; /* Padding */
+    font-size: 16px;
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+#endTurnButton:hover {
+    background-color: #666666; /* Lighter background on hover */
+}
+
+footer {
+    background-color: #1c1c1c; /* Dark background for footer */
+    color: #e0e0e0; /* Light text */
+    padding: 10px; /* Padding */
+    text-align: center; /* Centered text */
+    position: fixed; /* Fixed position at the bottom */
+    width: 100%; /* Full width */
+    bottom: 0; /* Stick to the bottom */
 }

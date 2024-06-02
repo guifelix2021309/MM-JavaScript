@@ -5,32 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monster Mayhem Game Board</title>
     <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet"> <!-- Google Font -->
     <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
-    <h1>Monster Mayhem Game Board</h1>
-    <div id="nicknameForm">
-        <label for="nickname">Enter your nickname:</label>
-        <input type="text" id="nickname" name="nickname" required>
-        <button id="joinGameButton">Join Game</button>
-    </div>
-    <div id="waitingMessage" style="display: none;">Waiting for an opponent...</div>
-    <div id="gameArea" style="display: none;">
-        <div id="currentPlayer">Current Player: N/A</div>
-        <div id="roundCounter">Round: 0</div>
-        <div id="monsterOptions"></div>
-        <table id="gameBoard">
-            <tbody></tbody>
-        </table>
-        <button id="endTurnButton" style="display: none;">End Turn</button>
-        <div id="stats">
-            <div id="gamesPlayed">Games Played: 0</div>
-            <div id="playerStats">
-                <div id="player1Stats">Player 1 - Wins: <span id="player1Wins">0</span>, Losses: <span id="player1Losses">0</span></div>
-                <div id="player2Stats">Player 2 - Wins: <span id="player2Wins">0</span>, Losses: <span id="player2Losses">0</span></div>
-            </div>
+    <header>
+        <h2 class="monster-title">Welcome to Monster Mayhem!</h2>
+    </header>
+    <main>
+        <div id="nicknameForm">
+            <label for="nickname">Enter your nickname:</label><br>
+            <input type="text" id="nickname" name="nickname" required><br>
+            <button id="joinGameButton">Join Game</button>
         </div>
-    </div>
+        <div id="waitingMessage" style="display: none;">Waiting for an opponent...</div>
+        <div id="gameArea" style="display: none;">
+            <div id="boardContainer">
+                <div id="currentPlayer">Current Player: N/A</div>
+                <div id="roundCounter">Round: 0</div>
+                <table id="gameBoard">
+                    <tbody></tbody>
+                </table>
+                <div id="stats">
+                    <div id="playerStats">
+                        <div id="player1Stats">
+                            <span id="player1Name" class="player1-name">Player 1</span> - Wins: <span id="player1Wins">0</span>, Losses: <span id="player1Losses">0</span>
+                        </div>
+                        <div id="player2Stats">
+                            <span id="player2Name" class="player2-name">Player 2</span> - Wins: <span id="player2Wins">0</span>, Losses: <span id="player2Losses">0</span>
+                        </div>
+                    </div>
+                    <br> <!-- Add line break for spacing -->
+                    <div id="gamesPlayed">Games Played: 0</div>
+                </div>
+            </div>
+            <div id="monsterOptions">
+                <!-- Monster options will be dynamically inserted here -->
+            </div>
+            <button id="endTurnButton">End Turn</button>
+        </div>
+    </main>
+    <footer>
+        <p>John Doe, College of Computer Science, XYZ University</p>
+    </footer>
     <script src="script.js"></script>
 </body>
 </html>

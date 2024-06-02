@@ -27,8 +27,10 @@ socket.on('startGame', ({ gameId, players }) => {
     const player = players.find(p => p.socketId === socket.id);
     currentPlayer = player.id;
     document.getElementById('currentPlayer').textContent = `Current Player: ${player.nickname}`;
-    document.getElementById('player1Stats').innerHTML = `${playerNicknames[1]} - Wins: <span id="player1Wins">0</span>, Losses: <span id="player1Losses">0</span>`;
-    document.getElementById('player2Stats').innerHTML = `${playerNicknames[2]} - Wins: <span id="player2Wins">0</span>, Losses: <span id="player2Losses">0</span>`;
+    document.getElementById('player1Name').textContent = playerNicknames[1];
+    document.getElementById('player2Name').textContent = playerNicknames[2];
+    document.getElementById('player1Stats').innerHTML = `<span id="player1Name" class="player1-name">${playerNicknames[1]}</span> - Wins: <span id="player1Wins">0</span>, Losses: <span id="player1Losses">0</span>`;
+    document.getElementById('player2Stats').innerHTML = `<span id="player2Name" class="player2-name">${playerNicknames[2]}</span> - Wins: <span id="player2Wins">0</span>, Losses: <span id="player2Losses">0</span>`;
     fetchGameState(gameId); // Fetch the initial game state
 });
 
@@ -111,6 +113,14 @@ function displayGameBoard(gameBoard) {
             cell.dataset.column = j;
             cell.dataset.player = player;
             cell.dataset.monster = monster;
+
+            // Apply class based on player
+            if (player === 1) {
+                cell.classList.add('player1');
+            } else if (player === 2) {
+                cell.classList.add('player2');
+            }
+
             cell.addEventListener('click', handleCellClick);
             row.appendChild(cell);
         }

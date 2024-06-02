@@ -74,7 +74,7 @@ class GameState {
     }
 
     getRandomBorderPosition(playerId) {
-        const borderRows = playerId === 1 ? [0, 1, 2] : [7, 8, 9];
+        const borderRows = playerId === 1 ? [0] : [9];
         const row = borderRows[Math.floor(Math.random() * borderRows.length)];
         const column = Math.floor(Math.random() * 10);
         return [row, column];

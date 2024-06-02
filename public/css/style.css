@@ -106,20 +106,29 @@ main {
 }
 
 #gameBoard {
-    border-collapse: separate;
-    border-spacing: 5px; /* Add spacing between cells */
-    background-color: #333333; /* Dark background for the game board */
+    border-collapse: collapse;
 }
 
 #gameBoard td {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     border: 1px solid #555555; /* Dark border */
     text-align: center;
     vertical-align: middle;
-    background-color: #444444; /* Slightly lighter background for cells */
     color: #e0e0e0; /* Light text for cells */
     box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
+    padding: 0; /* Remove any padding */
+    margin: 0; /* Remove any margin */
+}
+
+#gameBoard tr:nth-child(even) td:nth-child(odd),
+#gameBoard tr:nth-child(odd) td:nth-child(even) {
+    background-color: #a5a5a5; /* Light color for alternating cells */
+}
+
+#gameBoard tr:nth-child(even) td:nth-child(even),
+#gameBoard tr:nth-child(odd) td:nth-child(odd) {
+    background-color: #4b4b4b; /* Dark color for alternating cells */
 }
 
 .player1 {
@@ -127,7 +136,7 @@ main {
 }
 
 .player2 {
-    background-color: #470053 !important; /* Purple background for Player 2 */
+    background-color: #51035f !important; /* Purple background for Player 2 */
 }
 
 button {
@@ -166,6 +175,14 @@ input[type="text"], #joinGameButton {
     color: #e0e0e0; /* Light text for labels */
 }
 
+#waitingMessage {
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+    color: #ffffff; /* White text */
+    padding: 20px; /* Padding */
+    border-radius: 10px; /* Rounded corners */
+    display: inline-block; /* Fit to content width */
+}
+
 #stats div {
     color: #e0e0e0; /* Light text for stats */
     margin: 10px 0; /* Add space between elements */
@@ -179,7 +196,7 @@ input[type="text"], #joinGameButton {
 }
 
 .player2-name {
-    background-color: #470053; /* Purple background for Player 2 */
+    background-color: #51035f; /* Purple background for Player 2 */
     color: #ffffff; /* White text for better contrast */
     padding: 2px 5px;
     border-radius: 3px;
@@ -201,14 +218,6 @@ input[type="text"], #joinGameButton {
 
 #endTurnButton:hover {
     background-color: #666666; /* Lighter background on hover */
-}
-
-#waitingMessage {
-    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
-    color: #ffffff; /* White text */
-    padding: 20px; /* Padding */
-    border-radius: 10px; /* Rounded corners */
-    display: inline-block; /* Fit to content width */
 }
 
 footer {

@@ -9,7 +9,10 @@ body {
     background-attachment: fixed; /* Make the background image fixed */
     background-position: center; /* Center the background image */
     margin: 0; /* Remove default margin */
-    padding-top: 80px; /* Add padding to prevent content from hiding behind the header */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    min-height: 100vh; /* Ensure the body takes the full height of the viewport */
+    display: flex;
+    flex-direction: column;
 }
 
 h1 {
@@ -30,21 +33,30 @@ header {
     padding: 10px; /* Padding */
     text-align: center; /* Centered text */
     width: 100%; /* Full width */
-    top: 0; /* Stick to the top */
-    position: fixed; /* Fixed position at the top */
-    z-index: 1; /* Ensure header is above other content */
+    position: static; /* Static position at the top */
 }
 
 main {
-    padding-top: 80px; /* Ensure main content starts below the fixed header */
+    flex: 1; /* Take up remaining space between header and footer */
+    padding: 20px; /* Add some padding */
+    box-sizing: border-box; /* Include padding in the element's total width and height */
+    display: flex;
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
 }
 
 #gameArea {
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: center;
     gap: 20px; /* Adjust gap as needed */
     position: relative;
+}
+
+#gameContent {
+    display: flex;
+    gap: 20px; /* Adjust gap as needed */
+    align-items: flex-start; /* Align items to the start of the flex container */
 }
 
 #boardContainer {
@@ -62,11 +74,26 @@ main {
     max-width: fit-content; /* Ensure it fits the content */
 }
 
-#monsterOptions {
+#monsterOptionsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     background-color: #1c1c1c; /* Dark background */
     padding: 10px; /* Padding */
     border-radius: 5px; /* Rounded corners */
     max-width: 200px; /* Limit width */
+}
+
+#monsterOptionsContainer p {
+    margin: 0 0 10px 0; /* Margin for the paragraph */
+    font-size: 1.2em; /* Adjust text size */
+    color: #e0e0e0; /* Light text */
+}
+
+#monsterOptions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 #monsterOptions button {
@@ -96,11 +123,11 @@ main {
 }
 
 .player1 {
-    background-color: #4caf50 !important; /* Green background for Player 1 */
+    background-color: #006600 !important; /* Green background for Player 1 */
 }
 
 .player2 {
-    background-color: #9c27b0 !important; /* Purple background for Player 2 */
+    background-color: #470053 !important; /* Purple background for Player 2 */
 }
 
 button {
@@ -145,14 +172,14 @@ input[type="text"], #joinGameButton {
 }
 
 .player1-name {
-    background-color: #4caf50; /* Green background for Player 1 */
+    background-color: #006600; /* Green background for Player 1 */
     color: #ffffff; /* White text for better contrast */
     padding: 2px 5px;
     border-radius: 3px;
 }
 
 .player2-name {
-    background-color: #9c27b0; /* Purple background for Player 2 */
+    background-color: #470053; /* Purple background for Player 2 */
     color: #ffffff; /* White text for better contrast */
     padding: 2px 5px;
     border-radius: 3px;
@@ -176,12 +203,19 @@ input[type="text"], #joinGameButton {
     background-color: #666666; /* Lighter background on hover */
 }
 
+#waitingMessage {
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+    color: #ffffff; /* White text */
+    padding: 20px; /* Padding */
+    border-radius: 10px; /* Rounded corners */
+    display: inline-block; /* Fit to content width */
+}
+
 footer {
     background-color: #1c1c1c; /* Dark background for footer */
     color: #e0e0e0; /* Light text */
     padding: 10px; /* Padding */
     text-align: center; /* Centered text */
-    position: fixed; /* Fixed position at the bottom */
     width: 100%; /* Full width */
-    bottom: 0; /* Stick to the bottom */
+    position: static; /* Static position at the bottom */
 }

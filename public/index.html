@@ -20,27 +20,32 @@
         </div>
         <div id="waitingMessage" style="display: none;">Waiting for an opponent...</div>
         <div id="gameArea" style="display: none;">
-            <div id="boardContainer">
-                <div id="currentPlayer">Current Player: N/A</div>
-                <div id="roundCounter">Round: 0</div>
-                <table id="gameBoard">
-                    <tbody></tbody>
-                </table>
-                <div id="stats">
-                    <div id="playerStats">
-                        <div id="player1Stats">
-                            <span id="player1Name" class="player1-name">Player 1</span> - Wins: <span id="player1Wins">0</span>, Losses: <span id="player1Losses">0</span>
-                        </div>
-                        <div id="player2Stats">
-                            <span id="player2Name" class="player2-name">Player 2</span> - Wins: <span id="player2Wins">0</span>, Losses: <span id="player2Losses">0</span>
-                        </div>
+            <div id="gameContent">
+                <div id="monsterOptionsContainer">
+                    <p id="monsterMessage">Please select your monster and add to the board</p>
+                    <div id="monsterOptions">
+                        <!-- Monster options will be dynamically inserted here -->
                     </div>
-                    <br> <!-- Add line break for spacing -->
-                    <div id="gamesPlayed">Games Played: 0</div>
                 </div>
-            </div>
-            <div id="monsterOptions">
-                <!-- Monster options will be dynamically inserted here -->
+                <div id="boardContainer">
+                    <div id="currentPlayer">Current Player: N/A</div>
+                    <div id="roundCounter">Round: 0</div>
+                    <table id="gameBoard">
+                        <tbody></tbody>
+                    </table>
+                    <div id="stats">
+                        <div id="playerStats">
+                            <div id="player1Stats">
+                                <span id="player1Name" class="player1-name">Player 1</span> - Wins: <span id="player1Wins">0</span>, Losses: <span id="player1Losses">0</span>
+                            </div>
+                            <div id="player2Stats">
+                                <span id="player2Name" class="player2-name">Player 2</span> - Wins: <span id="player2Wins">0</span>, Losses: <span id="player2Losses">0</span>
+                            </div>
+                        </div>
+                        <br> <!-- Add line break for spacing -->
+                        <div id="gamesPlayed">Games Played: 0</div>
+                    </div>
+                </div>
             </div>
             <button id="endTurnButton">End Turn</button>
         </div>

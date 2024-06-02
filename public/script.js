@@ -134,16 +134,19 @@ function displayCurrentPlayer(playerId) {
 }
 
 function displayMonsterOptions() {
+    const monsterOptionsContainer = document.getElementById('monsterOptionsContainer');
     const monsterOptions = document.getElementById('monsterOptions');
     monsterOptions.innerHTML = `
         <button onclick="selectMonster('Vampire')">Vampire</button>
         <button onclick="selectMonster('Werewolf')">Werewolf</button>
         <button onclick="selectMonster('Ghost')">Ghost</button>
     `;
+    monsterOptionsContainer.style.display = 'block'; // Ensure the container is visible
 }
 
 function selectMonster(monsterType) {
     selectedMonster = { monster: monsterType };
+    document.getElementById('monsterOptionsContainer').style.display = 'none'; // Hide the monster options container
 }
 
 function handleCellClick(event) {

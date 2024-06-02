@@ -55,6 +55,10 @@ socket.on('gameState', (gameState) => {
 
 socket.on('error', (message) => {
     alert(message);
+    // Ensure the monster options are displayed again after an error
+    if (initialPlacement) {
+        displayMonsterOptions();
+    }
 });
 
 function joinGame() {
@@ -163,6 +167,7 @@ function handleCellClick(event) {
                 selectedMonster = null; // Reset the selected monster
             } else {
                 alert('Invalid placement. Target cell is not empty.');
+                displayMonsterOptions(); // Re-display monster options
             }
         } else {
             alert('Select a monster to place from the options below.');
@@ -265,21 +270,27 @@ function updatePlayerStats(playerId, result) {
 }
 
 function showPlayAgainOption() {
-    const playAgainMessage = document.createElement('div');
-    playAgainMessage.innerHTML = `
+    const modalBackground = document.createElement('div');
+    modalBackground.className = 'modal-background';
+
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.innerHTML = `
         <p>Would you like to play again?</p>
         <button id="playAgainYes">Yes</button>
         <button id="playAgainNo">No</button>
     `;
-    document.body.appendChild(playAgainMessage);
+
+    modalBackground.appendChild(modal);
+    document.body.appendChild(modalBackground);
 
     document.getElementById('playAgainYes').addEventListener('click', () => {
-        playAgainMessage.remove();
+        modalBackground.remove();
         socket.emit('playAgain', { gameId: currentGameId });
     });
 
     document.getElementById('playAgainNo').addEventListener('click', () => {
-        playAgainMessage.remove();
+        modalBackground.remove();
         window.location.href = '/';
     });
 }

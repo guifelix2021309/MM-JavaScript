@@ -2,7 +2,7 @@ class GameState {
     constructor() {
         this.resetGameState();
     }
-
+    //constructor and Initial State
     resetGameState() {
         this.gameBoard = Array(10).fill(null).map(() => Array(10).fill({ player: 0, monster: 'None' }));
         this.playerEliminationCount = { 1: 0, 2: 0 };
@@ -17,11 +17,11 @@ class GameState {
         this.winner = null; // Track the winner of the game
         this.round = 0; // Initialize the round counter
     }
-
+    //Game State Management
     reset() {
         this.resetGameState();
     }
-
+    //Game Board
     getGameBoard() {
         return {
             board: this.gameBoard,
@@ -31,7 +31,7 @@ class GameState {
             round: this.round
         };
     }
-
+    //Player Actions
     addMonster(playerId, row, column, monsterType) {
         if (playerId !== this.currentPlayer) {
             throw new Error('Not your turn!');
@@ -53,7 +53,7 @@ class GameState {
             this.endTurn();
         }
     }
-
+    //Random Generates 7 monsters each side
     randomPlaceRemainingMonsters() {
         for (let playerId of this.players) {
             for (let i = 0; i < 7; i++) {
@@ -72,19 +72,19 @@ class GameState {
             }
         }
     }
-
+    // Place the random monster on the borders of the grid
     getRandomBorderPosition(playerId) {
         const borderRows = playerId === 1 ? [0] : [9];
         const row = borderRows[Math.floor(Math.random() * borderRows.length)];
         const column = Math.floor(Math.random() * 10);
         return [row, column];
     }
-
+    // Get random monster type
     getRandomMonsterType() {
         const monsters = ['Vampire', 'Werewolf', 'Ghost'];
         return monsters[Math.floor(Math.random() * monsters.length)];
     }
-
+    //Player Actions
     moveMonster(playerId, startRow, startColumn, endRow, endColumn) {
         if (this.initialPlacement) {
             throw new Error('Cannot move monsters during the initial placement phase.');
@@ -117,7 +117,7 @@ class GameState {
 
         this.checkForNoMovesLeft();
     }
-
+    //Game Logic and Validation
     isValidPlacement(playerId, row, column) {
         if (this.gameBoard[row][column].player !== 0) {
             return false;
@@ -133,7 +133,7 @@ class GameState {
 
         return false;
     }
-
+    //Game Logic and Validation
     isValidMove(playerId, startRow, startColumn, endRow, endColumn) {
         if (startRow < 0 || startRow >= 10 || startColumn < 0 || startColumn >= 10 ||
             endRow < 0 || endRow >= 10 || endColumn < 0 || endColumn >= 10) {
@@ -150,7 +150,7 @@ class GameState {
         // Allow movement up to 10 squares horizontally or vertically, or up to 2 squares diagonally
         return (rowDiff === 0 && colDiff <= 10) || (colDiff === 0 && rowDiff <= 10) || (rowDiff === colDiff && rowDiff <= 2);
     }
-
+    //Game Logic and Validation
     getPath(startRow, startColumn, endRow, endColumn) {
         const path = [];
         const rowStep = startRow < endRow ? 1 : -1;
@@ -172,7 +172,7 @@ class GameState {
 
         return path;
     }
-
+    //Game Logic and Validation
     resolveConflict(startRow, startColumn, endRow, endColumn) {
         const startCell = this.gameBoard[startRow][startColumn];
         const endCell = this.gameBoard[endRow][endColumn];
@@ -199,19 +199,19 @@ class GameState {
 
         this.gameBoard[startRow][startColumn] = { player: 0, monster: 'None' };
     }
-
+    //Game Logic and Validation
     checkForNoMovesLeft() {
         const currentPlayerMonsters = this.gameBoard.flat().filter(cell => cell.player === this.currentPlayer);
         if (currentPlayerMonsters.length === 0 || !currentPlayerMonsters.some(monster => this.canMonsterMove(monster))) {
             this.endTurn();
         }
     }
-
+    //Game Logic and Validation
     canMonsterMove(monster) {
         // Define logic to check if a monster can move
         return true; // Replace this with actual logic
     }
-
+    //Player Actions 
     endTurn() {
         if (this.isGameOver) {
             return;
@@ -228,7 +228,7 @@ class GameState {
         }
         this.checkForWin();
     }
-
+    //Game Logic
     determineFirstPlayer() {
         const playerCounts = Object.entries(this.playerMonsterCount);
         playerCounts.sort((a, b) => a[1] - b[1]);
@@ -236,7 +236,7 @@ class GameState {
         const tiedPlayers = playerCounts.filter(([player, count]) => count === minCount).map(([player]) => parseInt(player));
         return tiedPlayers[Math.floor(Math.random() * tiedPlayers.length)];
     }
-
+    //Game Logic
     determineNextPlayer() {
         const playerCounts = Object.entries(this.playerMonsterCount);
         playerCounts.sort((a, b) => a[1] - b[1]);
@@ -244,7 +244,7 @@ class GameState {
         const tiedPlayers = playerCounts.filter(([player, count]) => count === minCount).map(([player]) => parseInt(player));
         return tiedPlayers[Math.floor(Math.random() * tiedPlayers.length)];
     }
-
+    //Validation
     checkForWin() {
         if (this.playerMonsterCount[1] <= 0 && this.playerMonsterCount[2] <= 0) {
             this.winner = 'draw';
